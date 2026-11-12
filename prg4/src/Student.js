@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 
 // Initial student data
 const studentList = [
@@ -8,147 +8,122 @@ const studentList = [
 ];
 
 // Component to display one student row
-class StudentRow extends React.Component {
-  render() {
-    const student = this.props.student;
-
-    return (
-      <tr>
-        <td>{student.slno}</td>
-        <td>{student.name}</td>
-        <td>{student.usn}</td>
-        <td>{student.tmarks}</td>
-      </tr>
-    );
-  }
+function StudentRow({ student }) {
+  return (
+    <tr>
+      <td>{student.slno}</td>
+      <td>{student.name}</td>
+      <td>{student.usn}</td>
+      <td>{student.tmarks}</td>
+    </tr>
+  );
 }
 
 // Component to display student table
-class StudentsTable extends React.Component {
-  render() {
-    return (
-      <table border="1" cellPadding="10">
-        <thead>
-          <tr>
-            <th>Sl No</th>
-            <th>Student Name</th>
-            <th>USN</th>
-            <th>Total Marks</th>
-          </tr>
-        </thead>
+function StudentsTable({ students }) {
+  return (
+    <table border="1" cellPadding="10">
+      <thead>
+        <tr>
+          <th>Sl No</th>
+          <th>Student Name</th>
+          <th>USN</th>
+          <th>Total Marks</th>
+        </tr>
+      </thead>
 
-        <tbody>
-          {this.props.students.map((student) => (
-            <StudentRow
-              key={student.slno}
-              student={student}
-            />
-          ))}
-        </tbody>
-      </table>
-    );
-  }
+      <tbody>
+        {students.map((student) => (
+          <StudentRow
+            key={student.slno}
+            student={student}
+          />
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 // Component to add a student
-class StudentAddSubmit extends React.Component {
-  constructor(props) {
-    super(props);
+function StudentAddSubmit({ addStudent }) {
+  const [name, setName] = useState("");
+  const [usn, setUsn] = useState("");
+  const [tmarks, setTmarks] = useState("");
 
-    this.state = {
-      name: "",
-      usn: "",
-      tmarks: ""
-    };
-  }
-
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const student = {
-      name: this.state.name,
-      usn: this.state.usn,
-      tmarks: this.state.tmarks
+      name: name,
+      usn: usn,
+      tmarks: tmarks
     };
 
-    this.props.addStudent(student);
+    addStudent(student);
 
-    this.setState({
-      name: "",
-      usn: "",
-      tmarks: ""
-    });
+    // Clear form
+    setName("");
+    setUsn("");
+    setTmarks("");
   };
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={this.state.name}
-          onChange={(e) => this.setState({ name: e.target.value })}
-          required
-        />
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
 
-        <input
-          type="text"
-          placeholder="USN"
-          value={this.state.usn}
-          onChange={(e) => this.setState({ usn: e.target.value })}
-          required
-        />
+      <input
+        type="text"
+        placeholder="USN"
+        value={usn}
+        onChange={(e) => setUsn(e.target.value)}
+        required
+      />
 
-        <input
-          type="number"
-          placeholder="Total Marks"
-          value={this.state.tmarks}
-          onChange={(e) => this.setState({ tmarks: e.target.value })}
-          required
-        />
+      <input
+        type="number"
+        placeholder="Total Marks"
+        value={tmarks}
+        onChange={(e) => setTmarks(e.target.value)}
+        required
+      />
 
-        <button type="submit">Add</button>
-      </form>
-    );
-  }
+      <button type="submit">Add</button>
+    </form>
+  );
 }
 
 // Main component
-class StudentListTable extends React.Component {
-  constructor(props) {
-    super(props);
+function StudentListTable() {
+  const [students, setStudents] = useState(studentList);
 
-    this.state = {
-      students: studentList
-    };
-  }
-
-  addStudent = (student) => {
+  const addStudent = (student) => {
     const newStudent = {
       ...student,
-      slno: this.state.students.length + 1
+      slno: students.length + 1
     };
 
-    this.setState({
-      students: [...this.state.students, newStudent]
-    });
+    setStudents([...students, newStudent]);
   };
 
-  render() {
-    return (
-      <div>
-        <h2>Student List</h2>
+  return (
+    <div>
+      <h2>Student List</h2>
 
-        <StudentsTable students={this.state.students} />
+      <StudentsTable students={students} />
 
-        <hr />
+      <hr />
 
-        <h3>Add Student</h3>
+      <h3>Add Student</h3>
 
-        <StudentAddSubmit addStudent={this.addStudent} />
-      </div>
-    );
-  }
+      <StudentAddSubmit addStudent={addStudent} />
+    </div>
+  );
 }
 
 export default StudentListTable;
