@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3><center>USER FORM</center></h3>
+    <div style="display: flex; justify-content: center;">
+        <form onsubmit="handleStudentSubmit(event)" style="display: flex;flex-direction: column; justify-content: center;">
+            <h2><center>Enter bellow details</center></h2>
+            Enter Name
+            <input type="text" id="name"><br>
+            Enter semester 
+            <input type="text" id="semester"><br>
+            Enter Branch 
+            <input type="text" id="branch"><br>
+            <input type="submit" >
+        </form>
+    </div>
+    <div id = "result"></div>
+    <script>
+        async function handleStudentSubmit(event){
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const semester = document.getElementById("semester").value;
+            const branch = document.getElementById("branch").value;
+
+            try {
+            const response = await fetch('/student',
+                {
+                    method : "POST",
+                    headers:{
+                        "Content-Type" : "application/json",
+                        
+                    },
+                    body :JSON.stringify({
+                        "name":name,
+                        "semester":semester,
+                        "branch":branch
+                    })
+                }
+                
+            )
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || `Request failed (${response.status})`);
+            }
+
+            document.getElementById('result').innerHTML= `
+            Student Name : <h3> ${data.name}</h3> <br>
+            Student semester : <h3> ${data.semester}</h3> <br>
+            Student Branch : <h3> ${data.branch}</h3> <br>
+            `
+            } catch (error) {
+                document.getElementById('result').textContent = `Could not submit the form: ${error.message}. Make sure prg2.js is running and open this page at http://localhost:3000.`;
+            }
+        }
+    </script>
+</body>
+</html>
