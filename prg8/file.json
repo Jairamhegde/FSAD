@@ -50,7 +50,6 @@ db.catalog.createIndex({
   description: "text",
   tags: "text"
 })
-
 // Step 3: Execute aggregation pipeline
 db.catalog.aggregate([
     {

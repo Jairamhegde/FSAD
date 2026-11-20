@@ -1,65 +1,101 @@
-const express = require('express');
+import React from 'react';
+import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
 
-const app = express();
+// 1. Home Component
+function Home() {
+    return (
+        <div>
+            <h2>Home Page</h2>
+            <p>Welcome to the Home page!</p>
+        </div>
+    );
+}
 
-app.use(express.json());
+// 2. About Component
+function About() {
+    return (
+        <div>
+            <h2>About Page</h2>
+            <p>Learn more about us on this page.</p>
+        </div>
+    );
+}
 
-let books = [
-    {
-        id: 100,
-        name: "Mybook 1",
-        price: 400
-    },
-    {
-        id: 101,
-        name: "Mybook 2",
-        price: 500
-    }
-];
+// 3. Profile Component
+function Profile() {
+    return (
+        <div>
+            <h2>Profile Page</h2>
+            <p>User Profile: Welcome back!</p>
+        </div>
+    );
+}
 
-// GET: Retrieve all books
-app.get('/book', (req, res) => {
-    res.json(books);
-});
+function test_navigate() {
+    return (
+        <>
+            <h2>This is the test navigate</h2>
+        </>
+    )
+}
 
-// POST: Add a new book
-app.post('/book', (req, res) => {
-    const newb = {
-        id: books.length + 1,
-        name: req.body.name,
-        price: req.body.price
+
+function MyComponent() {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate('/profile');
     };
 
-    books.push(newb);
+    return (
+        <button
+            onClick={handleClick}
+            style={{
+                padding: "8px 16px",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px"
+            }}
+        >
+            Go to Profile
+        </button>
+    );
+}
 
-    res.status(201).json({
-        message: "Book added successfully",
-        book: newb
-    });
-});
+// Main App Component with Router and Navigation
+function App() {
+    return (
+        <BrowserRouter>
+            <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+                <h1>My React App</h1>
 
-// PUT: Update an existing book
-app.put('/book/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+                {/* Navigation Bar */}
+                <nav style={{ display: "flex", gap: "15px", marginBottom: "20px" }}>
+                    <Link to="/" style={{ textDecoration: "none", color: "#007bff" }}>Home</Link>
+                    <Link to="/about" style={{ textDecoration: "none", color: "#007bff" }}>About</Link>
+                    <Link to="/profile" style={{ textDecoration: "none", color: "#007bff" }}>Profile</Link>
+                </nav>
 
-    const book = books.find(b => b.id === id);
+                {/* MyComponent Button Display */}
+                <div style={{ marginBottom: "20px" }}>
+                    <p>Programmatic Navigation Button:</p>
+                    <MyComponent />
+                </div>
 
-    if (!book) {
-        return res.status(404).json({
-            message: "Book id not found"
-        });
-    }
+                <hr style={{ margin: "20px 0" }} />
 
-    book.name = req.body.name;
-    book.price = req.body.price;
+                {/* Route Views */}
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/profile" element={<Profile />} />
+                </Routes>
+            </div>
+        </BrowserRouter>
+    );
+}
 
-    res.json({
-        message: "Book updated",
-        book: book
-    });
-});
-
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+export default App;
